@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3>LATEST FIVE BLOG ENTRIES</h3>
+<hr>
+    {% for post in entry %}
+        <div class= "post">
+            <div class = "blog-datetime">{{post.created}}</div>
+            <div class="blog-subject"><a href= {{ "%s%s"|format("/blog/", post.key().id()) }} > {{ post.subject }}</a></div>
+            <pre class="blog-post">{{post.post}}</pre>
+            <hr>
+        </div>
+    {% endfor %}
+
+{% endblock %}

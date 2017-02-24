@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{{error}}
+<div class= "post">
+    <div class = "blog-datetime">{{single_entry.created}}</div>
+    <div class="blog-subject"><a href=""{{ single_entry.key().id() }}>{{single_entry.subject}}</a></div>
+    <pre class="blog-post">{{single_entry.post}}</pre>
+    <hr>
+</div>
+
+{% endblock %}
