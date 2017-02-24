@@ -17,6 +17,9 @@
 import os
 import webapp2
 import jinja2
+import cgi
+import re
+
 
 
 from google.appengine.ext import db
@@ -87,9 +90,14 @@ class NewPost(Handler):
             error = "Both Subject and New Post must be filled out!"
             self.render('newpost.html', error = error, post = post, subject = subject)
 
+class Login(Handler):
+    def get(self):
+        self.render('login.html')
+
 app = webapp2.WSGIApplication([
     ('/', Home),
     ('/blog', Blog),
     webapp2.Route('/blog/<id:\d+>', ViewPostHandler),
     ('/newpost', NewPost),
+    ('/login', Login),
 ], debug=True)
