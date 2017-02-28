@@ -90,14 +90,94 @@ class NewPost(Handler):
             error = "Both Subject and New Post must be filled out!"
             self.render('newpost.html', error = error, post = post, subject = subject)
 
+class Signup(Handler):
+    def get(self, username=None,username_error=None,password_error=None,verification_error=None,email=None, email_error=None ):
+        self.render('signup.html')
+
+    def post(self):
+        username = self.request.get("username")
+        password = self.request.get("password")
+        verification = self.request.get("verification")
+        email = self.request.get("email")
+
+        username_error = self.validate_username(username)
+        password_error = self.validate_password(password)
+        verification_error = self.validate_verification(verification,password)
+        email_error = self.validate_email(email)
+
+        #you must pass through all the variables before this will work
+        if username_error == password_error == verification_error == "" and email_error == "Thanks for giving us your email. >:)":
+            self.redirect("/")
+        elif username_error == password_error == verification_error == email_error == "":
+            self.redirect("/")
+        else:
+            self.render("signup.html", username=username, username_error=username_error, password_error=password_error, verification_error=verification_error, email=email, email_error=email_error)
+
+
+    def validate_username(self,username):
+        username = self.request.get("username")
+        USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
+
+        if not username:
+            username_error = "Username is blank!".format(username)
+            return username_error
+        elif username and USER_RE.match(username):
+            return ""
+        else:
+            username_error = "Invalid username."
+            return username_error
+
+
+    def validate_password(self,password):
+        password = self.request.get("password")
+        USER_RE = re.compile(r".{3,20}$")
+        if not password:
+            password_error = "Password is blank!".format(password)
+            return password_error
+        elif password and USER_RE.match(password):
+            return ""
+        else:
+            password_error = "Invalid password."
+            return password_error
+
+
+    def validate_verification(self,verification,password):
+        verification = self.request.get("verification")
+        if password != verification:
+            verification = ""
+            password = ""
+            verification_error = "Passwords don't match".format(verification)
+            return verification_error
+        else:
+            return ""
+
+
+    def validate_email(self,email):
+        email = self.request.get("email")
+        USER_RE = re.compile(r'[\S]+@[\S]+.[\S]+$')
+
+        if not email:
+            return ""
+        elif email and USER_RE.match(email):
+            return "Thanks for giving us your email. >:)"
+        else:
+            email_error = "Invalid email."
+            return email_error
+
 class Login(Handler):
     def get(self):
         self.render('login.html')
+
+class Logout(Handler):
+    def get(self):
+        self.render('login.html', logged_out="You are now logged out!")
 
 app = webapp2.WSGIApplication([
     ('/', Home),
     ('/blog', Blog),
     webapp2.Route('/blog/<id:\d+>', ViewPostHandler),
     ('/newpost', NewPost),
+    ('/signup', Signup),
     ('/login', Login),
+    ('/logout', Logout),
 ], debug=True)
